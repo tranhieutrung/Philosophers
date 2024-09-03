@@ -6,7 +6,7 @@
 /*   By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 22:09:40 by hitran            #+#    #+#             */
-/*   Updated: 2024/08/30 22:09:41 by hitran           ###   ########.fr       */
+/*   Updated: 2024/09/03 22:36:59 by hitran           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,12 @@ size_t	ft_strlen(const char *s)
 
 long	ft_atol(const char *s)
 {
-	long	nb;
+	long	number;
 	int		sign;
 
-	nb = 0;
+	number = 0;
 	sign = 1;
-	while ((*s > 8 && *s < 14) || *s == ' ')
+	while ((*s >= '\t' && *s <= '\r') || *s == ' ')
 		s++;
 	if (*s == '-')
 		sign = -sign;
@@ -39,8 +39,8 @@ long	ft_atol(const char *s)
 		s++;
 	while (*s >= '0' && *s <= '9')
 	{
-		nb = (nb * 10) + (*s - '0');
+		number = (number * 10) + (*s - '0');
 		s++;
 	}
-	return (nb * sign);
+	return (number * sign);
 }
