@@ -6,7 +6,7 @@
 /*   By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 22:09:40 by hitran            #+#    #+#             */
-/*   Updated: 2024/09/03 22:36:59 by hitran           ###   ########.fr       */
+/*   Updated: 2024/09/19 13:06:08 by hitran           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,20 +27,28 @@ size_t	ft_strlen(const char *s)
 long	ft_atol(const char *s)
 {
 	long	number;
-	int		sign;
 
 	number = 0;
-	sign = 1;
-	while ((*s >= '\t' && *s <= '\r') || *s == ' ')
-		s++;
-	if (*s == '-')
-		sign = -sign;
-	if (*s == '-' || *s == '+')
-		s++;
 	while (*s >= '0' && *s <= '9')
 	{
 		number = (number * 10) + (*s - '0');
 		s++;
 	}
-	return (number * sign);
+	return (number);
+}
+
+void	*ft_calloc(size_t count, size_t size)
+{
+	void	*res;
+	size_t	total;
+
+	total = count * size;
+	if (count > 0 && size > 0 && count != (total / size))
+		return (NULL);
+	res = malloc(total);
+	if (!res)
+		return (0);
+	while (total-- > 0)
+		((unsigned char *)res)[total] = 0;
+	return (res);
 }
