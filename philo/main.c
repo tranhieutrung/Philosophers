@@ -6,7 +6,7 @@
 /*   By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 21:23:12 by hitran            #+#    #+#             */
-/*   Updated: 2024/09/19 21:30:20 by hitran           ###   ########.fr       */
+/*   Updated: 2024/09/22 09:20:40 by hitran           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ int	main(int argc, char **argv)
 
 	if (!is_valid_args(argc, argv))
 		return (EXIT_FAILURE);
+	memset(philo, 0, sizeof(t_philo));
 	if (!init_philos(philo, argv))
 		return(EXIT_FAILURE);
 	if (!start_program(philo))

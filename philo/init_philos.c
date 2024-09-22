@@ -6,49 +6,49 @@
 /*   By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 21:38:43 by hitran            #+#    #+#             */
-/*   Updated: 2024/09/19 22:05:08 by hitran           ###   ########.fr       */
+/*   Updated: 2024/09/22 09:31:04 by hitran           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	parse_input(t_arg *args, char **argv)
+void	parse_input(t_philo *philo, char **argv)
 {
-	args->num_of_philos = ft_atol(argv[1]);
-	args->time_to_die = ft_atol(argv[2]);
-	args->time_to_eat = ft_atol(argv[3]);
-	args->time_to_sleep = ft_atol(argv[4]);
+	philo->args.num_of_philos = ft_atol(argv[1]);
+	philo->args.time_to_die = ft_atol(argv[2]);
+	philo->args.time_to_eat = ft_atol(argv[3]);
+	philo->args.time_to_sleep = ft_atol(argv[4]);
 	if (argv[5])
-		args->num_of_meals = ft_atol(argv[5]);
+		philo->args.num_of_meals = ft_atol(argv[5]);
 	else
-		args->num_of_meals = -1;
+		philo->args.num_of_meals = -1;
 }
 
-int	init_mutexes(int num_of_philos, t_mutex *mutexes)
+int	init_mutexes(t_philo *philo)
 {
 	int	ret;
 	
-	mutexes->eaten = num_of_philos;
-	ret = pthread_mutex_init(&mutexes->stop, NULL);
+	philo->mutexes->eaten = philo->args.num_of_philos;
+	ret = pthread_mutex_init(&philo->mutexes->stop, NULL);
 	if (ret)
 		return (ret);
-	ret = pthread_mutex_init(&mutexes->eaten, NULL);
+	ret = pthread_mutex_init(&philo->mutexes->eaten, NULL);
 	if (ret)
 	{
-		pthread_mutex_destroy(&mutexes->stop);
+		pthread_mutex_destroy(&philo->mutexes->stop);
 		return (ret);
 	}
-	ret = pthread_mutex_init(&mutexes->print, NULL);
+	ret = pthread_mutex_init(&philo->mutexes->print, NULL);
 	if (ret)
 	{
-		pthread_mutex_destroy(&mutexes->stop);
-		pthread_mutex_destroy(&mutexes->eaten);
+		pthread_mutex_destroy(&philo->mutexes->stop);
+		pthread_mutex_destroy(&philo->mutexes->eaten);
 		return (ret);
 	}
 	return (ret);
 }
 
-t_philo	*new_philo(t_arg *args, t_mutex *mutexes, int id)
+t_philo	*new_philo(t_philo *philo, int id)
 {
 	t_philo *new;
 	int		ret;
@@ -58,8 +58,8 @@ t_philo	*new_philo(t_arg *args, t_mutex *mutexes, int id)
 		return (NULL);
 	new->id = id;
 	new->num_of_chopsticks = 1;
-	new->args = *args;
-	new->mutexes = mutexes;
+	new->args = philo->args;
+	new->mutexes = philo->mutexes;
 	if (pthread_mutex_init(&new->chopstick, NULL))
 	{
 		free(new);
@@ -70,33 +70,30 @@ t_philo	*new_philo(t_arg *args, t_mutex *mutexes, int id)
 
 t_philo	*last_philo(t_philo *philo)
 {
-	while (philo->next)
+	while (philo && philo->next)
 		philo = philo->next;
 	return (philo);
 }
 
-bool	*init_philos(t_philo *philo, char **argv)
+bool	init_philos(t_philo *philo, char **argv)
 {
-	t_arg 		args;
-	t_mutex		*mutexes;
 	int			i;
 	t_philo		*new;
 
-	parse_input(&args, argv);
-	if (init_mutexes(args.num_of_philos, mutexes))
+	parse_input(philo, argv);
+	if (init_mutexes(philo))
 		return (false); //handle error
-	philo = NULL;
 	i = 0;
-	while (i < args.num_of_philos)
+	while (i < philo->args.num_of_philos)
 	{
-		new = new_philo(&args, mutexes, ++i);
+		new = new_philo(philo, ++i);
 		if (!new)
 			return (false); //handle error
-		new->next = philo;
 		if (i == 1)
 			philo = new;
 		else
 			last_philo(philo)->next = new;
 	}
+	last_philo(philo)->next = philo;;
 	return (true);
 }

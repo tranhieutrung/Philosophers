@@ -6,7 +6,7 @@
 /*   By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 22:11:41 by hitran            #+#    #+#             */
-/*   Updated: 2024/09/19 13:38:22 by hitran           ###   ########.fr       */
+/*   Updated: 2024/09/22 09:31:52 by hitran           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,11 +60,13 @@ typedef struct s_philo
 
 //----------------------------||     PHILO      ||----------------------------//
 
-bool	start_program(char **argv);
+bool	init_philos(t_philo *philo, char **argv);
+bool	start_program(t_philo *philo);
 
 //----------------------------||     UTILS      ||----------------------------//
 
 size_t	ft_strlen(const char *s);
 long	ft_atol(const char *s);
+void	*ft_calloc(size_t count, size_t size);
 
 #endif
