@@ -6,7 +6,7 @@
 #    By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/30 10:07:47 by hitran            #+#    #+#              #
-#    Updated: 2024/09/03 22:26:33 by hitran           ###   ########.fr        #
+#    Updated: 2024/09/25 15:21:25 by hitran           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,9 +18,10 @@ RM 				= rm -rf
 
 # Source files by directory
 SRCS			=	main.c	\
-					is_valid_args.c	\
-					start_philo.c	\
+					parse_input.c	\
+					init_philos.c \
 					utils.c
+# start_philo.c	\
 
 OBJS			=	$(SRCS:.c=.o)
 

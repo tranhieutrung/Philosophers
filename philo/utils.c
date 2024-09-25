@@ -5,50 +5,49 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/30 22:09:40 by hitran            #+#    #+#             */
-/*   Updated: 2024/09/19 13:06:08 by hitran           ###   ########.fr       */
+/*   Created: 2024/09/25 11:44:15 by hitran            #+#    #+#             */
+/*   Updated: 2024/09/25 15:28:55 by hitran           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-size_t	ft_strlen(const char *s)
+void	ft_putstr_fd(int fd, char *s)
 {
-	size_t	i;
+	size_t	len;
 
-	i = 0;
-	if (!s)
-		return (0);
-	while (s[i])
-		i++;
-	return (i);
+	len = 0;
+	while (s && s[len])
+		len++;
+	write(fd, s, len);
 }
 
-long	ft_atol(const char *s)
+long	get_time(void)
 {
-	long	number;
+	struct timeval	time;
 
-	number = 0;
-	while (*s >= '0' && *s <= '9')
+	if (gettimeofday(&time, NULL) == -1)
+		return (-1);
+	return (time.tv_sec * 1000 + time.tv_usec / 1000);
+}
+
+bool	free_philo(t_philo *philo)
+{
+	int index;
+
+	if (philo->threads)
 	{
-		number = (number * 10) + (*s - '0');
-		s++;
+		//free threads, mutexes
+		free (philo->threads);
 	}
-	return (number);
-}
-
-void	*ft_calloc(size_t count, size_t size)
-{
-	void	*res;
-	size_t	total;
-
-	total = count * size;
-	if (count > 0 && size > 0 && count != (total / size))
-		return (NULL);
-	res = malloc(total);
-	if (!res)
-		return (0);
-	while (total-- > 0)
-		((unsigned char *)res)[total] = 0;
-	return (res);
+	if (philo->forks)
+	{
+		index = 0;
+		while (philo->forks[index])
+			pthread_mutex_destroy(philo->forks[index++]);
+		free(philo->forks);
+	}
+	if (philo->lock)
+		pthread_mutex_destroy(philo->lock);
+	return (false);
 }
