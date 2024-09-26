@@ -6,7 +6,7 @@
 /*   By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 22:11:41 by hitran            #+#    #+#             */
-/*   Updated: 2024/09/26 15:05:07 by hitran           ###   ########.fr       */
+/*   Updated: 2024/09/26 23:35:21 by hitran           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 # include <pthread.h>		// thread
 # include <stdio.h>			// printf
 # include <sys/time.h>		// gettimeofday
-# include <stdbool.h>		// bool
 # include <string.h>		// memset
 
 # define MAX_INT 2147483647
@@ -32,13 +31,15 @@ typedef struct s_thread
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
 	struct s_philo	*philo;
-} t_thread;
+}	t_thread;
 
 typedef enum e_status
 {
 	RUNNING,
-	FINISH
-} t_status;
+	FINISH,
+	SUCCESS,
+	ERROR
+}	t_status;
 
 typedef struct s_philo
 {
@@ -53,25 +54,25 @@ typedef struct s_philo
 	t_thread		*threads;
 	t_status		status;
 	long			start_time;
-} t_philo;
+}	t_philo;
 
 //----------------------------||     PHILO      ||----------------------------//
-bool	parse_input(t_philo *philo, int argc, char **argv);
-bool	init_philo(t_philo *philo);
-void	*philo_routine(void *arg);
-bool	simulate_philo(t_philo *philo);
+t_status	parse_input(t_philo *philo, int argc, char **argv);
+t_status	init_philo(t_philo *philo);
+void		*philo_routine(void *arg);
+t_status	simulate_philo(t_philo *philo);
 
 //----------------------------||  ROUTINE UTILS ||----------------------------//
 
 t_status	check_status(t_philo *philo);
-bool		waiting(long ms, t_philo *philo);
-bool		print_action(t_thread *thread, char *message);
+t_status	waiting(long ms, t_philo *philo);
+t_status	print_action(t_thread *thread, char *message);
 
 //----------------------------||     UTILS      ||----------------------------//
 
-void	ft_putstr_fd(int fd, char *s);
-long	get_millisecond(void);
-bool	free_philo(t_philo *philo);
-bool 	philo_error(t_philo *philo, char *message);
+void		ft_putstr_fd(int fd, char *s);
+long		get_millisecond(void);
+t_status	free_philo(t_philo *philo);
+t_status	philo_error(t_philo *philo, char *message);
 
 #endif
