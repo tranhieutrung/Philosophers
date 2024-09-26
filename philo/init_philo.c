@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init_philos.c                                      :+:      :+:    :+:   */
+/*   init_philo.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 21:38:43 by hitran            #+#    #+#             */
-/*   Updated: 2024/09/25 15:28:43 by hitran           ###   ########.fr       */
+/*   Updated: 2024/09/26 14:41:14 by hitran           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,12 @@ bool	init_mutexes(t_philo *philo)
 
 	index = 0;
 	while (index < philo->num_of_philos)
-		if (pthread_mutex_init(philo->forks[index++], NULL))
+	{
+		if (pthread_mutex_init(&philo->forks[index], NULL))
 			return (false);
-	if (pthread_mutex_init(philo->lock, NULL))
+		index++;
+	}
+	if (pthread_mutex_init(&philo->lock, NULL))
 		return (false);
 	return (true);
 }
@@ -42,25 +45,28 @@ bool	init_threads(t_philo *philo)
 	while (index < philo->num_of_philos)
 	{
 		philo->threads[index].id = index + 1;
-		philo->threads[index].left_fork = philo->forks[index];
-		philo->threads[index].right_fork = philo->forks[(index + 1) % philo->num_of_philos];
-		if (pthread_join(philo->threads[index].thread, NULL) != 0)
+		philo->threads[index].left_fork = &philo->forks[index];
+		philo->threads[index].right_fork = &philo->forks[(index + 1) %
+				philo->num_of_philos];
+		philo->threads[index].philo = philo;
+		if (pthread_create(&(philo->threads[index].thread), NULL,
+			&philo_routine, &philo->threads[index]))
 			return (false);
 	}
 	return (true);
 }
 
-bool	init_philos(t_philo *philo)
+bool	init_philo(t_philo *philo)
 {
-	philo->millisecond = get_time();
-	if (philo->millisecond == -1)
-		return (init_error(philo, "Failed to get time"));
-	philo->threads = (t_thread *)malloc(philo->num_of_philos * sizeof(t_thread));
-	philo->forks = (pthread_mutex_t **)malloc(philo->num_of_philos * sizeof(pthread_mutex_t *));
+	philo->threads = malloc(philo->num_of_philos * sizeof(t_thread));
+	philo->forks = malloc(philo->num_of_philos * sizeof(pthread_mutex_t));
 	if (!philo->threads || !philo->forks)
 		return (init_error(philo, "Failed to allocate memories"));
 	if (!init_mutexes(philo))
 		return (init_error(philo, "Failed to init mutexes"));
+	philo->start_time = get_millisecond();
+	if (philo->start_time == -1)
+		return (init_error(philo, "Failed to get time"));
 	if (!init_threads(philo))
 		return (init_error(philo, "Failed to init threads"));
 	return (true);
