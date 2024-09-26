@@ -6,7 +6,7 @@
 /*   By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 22:11:41 by hitran            #+#    #+#             */
-/*   Updated: 2024/09/25 15:29:24 by hitran           ###   ########.fr       */
+/*   Updated: 2024/09/26 15:05:07 by hitran           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,36 +23,20 @@
 
 # define MAX_INT 2147483647
 
-// typedef struct s_arg
-// {
-// 	int	num_of_philos;
-// 	int	time_to_die;
-// 	int	time_to_eat;
-// 	int	time_to_sleep;
-// 	int	num_of_meals;
-// } t_arg;
-
-// typedef struct s_mutex
-// {
-// 	int	stop;
-// 	int	eaten;
-// 	pthread_mutex_t	finish;
-// 	pthread_mutex_t	eaten;
-// 	pthread_mutex_t	print;
-// } t_mutex;
-
 typedef struct s_thread
 {
 	pthread_t		thread;
 	size_t			id;
+	size_t			eaten_times;
+	long			last_eaten_time;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
+	struct s_philo	*philo;
 } t_thread;
 
 typedef enum e_status
 {
-	ATE,
-	DIED,
+	RUNNING,
 	FINISH
 } t_status;
 
@@ -63,25 +47,31 @@ typedef struct s_philo
 	size_t			time_to_eat;
 	size_t			time_to_sleep;
 	size_t			num_of_meals;
-	pthread_mutex_t	**forks;
-	pthread_mutex_t	*lock;
+	size_t			num_of_full_philos;
+	pthread_mutex_t	*forks;
+	pthread_mutex_t	lock;
 	t_thread		*threads;
 	t_status		status;
-	long			millisecond;
+	long			start_time;
 } t_philo;
 
 //----------------------------||     PHILO      ||----------------------------//
 bool	parse_input(t_philo *philo, int argc, char **argv);
-bool	init_philos(t_philo *philo);
-bool	start_program(t_philo *philo);
+bool	init_philo(t_philo *philo);
+void	*philo_routine(void *arg);
+bool	simulate_philo(t_philo *philo);
+
+//----------------------------||  ROUTINE UTILS ||----------------------------//
+
+t_status	check_status(t_philo *philo);
+bool		waiting(long ms, t_philo *philo);
+bool		print_action(t_thread *thread, char *message);
 
 //----------------------------||     UTILS      ||----------------------------//
 
-// size_t	ft_strlen(const char *s);
-// long	ft_atol(const char *s);
-// void	*ft_calloc(size_t count, size_t size);
 void	ft_putstr_fd(int fd, char *s);
-long	get_time(void);
+long	get_millisecond(void);
 bool	free_philo(t_philo *philo);
+bool 	philo_error(t_philo *philo, char *message);
 
 #endif

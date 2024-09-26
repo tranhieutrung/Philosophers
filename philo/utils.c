@@ -6,7 +6,7 @@
 /*   By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 11:44:15 by hitran            #+#    #+#             */
-/*   Updated: 2024/09/25 15:28:55 by hitran           ###   ########.fr       */
+/*   Updated: 2024/09/26 14:38:37 by hitran           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	ft_putstr_fd(int fd, char *s)
 	write(fd, s, len);
 }
 
-long	get_time(void)
+long	get_millisecond(void)
 {
 	struct timeval	time;
 
@@ -33,21 +33,26 @@ long	get_time(void)
 
 bool	free_philo(t_philo *philo)
 {
-	int index;
+	size_t index;
 
 	if (philo->threads)
-	{
-		//free threads, mutexes
 		free (philo->threads);
-	}
 	if (philo->forks)
 	{
 		index = 0;
-		while (philo->forks[index])
-			pthread_mutex_destroy(philo->forks[index++]);
+		while (index < philo->num_of_philos)
+			pthread_mutex_destroy(&philo->forks[index++]);
 		free(philo->forks);
 	}
-	if (philo->lock)
-		pthread_mutex_destroy(philo->lock);
+	pthread_mutex_destroy(&philo->lock);
+	return (false);
+}
+
+bool philo_error(t_philo *philo, char *message)
+{
+	ft_putstr_fd(2, "Error: ");
+	ft_putstr_fd(2, message);
+	ft_putstr_fd(2, "\n");
+	free_philo(philo);
 	return (false);
 }
