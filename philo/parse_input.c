@@ -6,13 +6,13 @@
 /*   By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 10:32:34 by hitran            #+#    #+#             */
-/*   Updated: 2024/09/25 15:17:06 by hitran           ###   ########.fr       */
+/*   Updated: 2024/09/26 23:35:54 by hitran           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static bool arg_error(char *argv, char *message)
+static t_status	arg_error(char *argv, char *message)
 {
 	ft_putstr_fd(2, "Error: ");
 	if (argv)
@@ -22,7 +22,7 @@ static bool arg_error(char *argv, char *message)
 	}
 	ft_putstr_fd(2, message);
 	ft_putstr_fd(2, "\n");
-	return (false);
+	return (ERROR);
 }
 
 static long	ft_atopi(char *s)
@@ -44,7 +44,7 @@ static long	ft_atopi(char *s)
 	return (number);
 }
 
-bool	is_valid_args(int argc, char **argv)
+t_status	is_valid_args(int argc, char **argv)
 {
 	int	i;
 
@@ -56,13 +56,14 @@ bool	is_valid_args(int argc, char **argv)
 		if (ft_atopi(argv[i]) <= 0)
 			return (arg_error(argv[i], "Is invalid"));
 	}
-	return (true);
+	return (SUCCESS);
 }
 
-bool	parse_input(t_philo *philo, int argc, char **argv)
+t_status	parse_input(t_philo *philo, int argc, char **argv)
 {
-	if (!is_valid_args(argc, argv))
-		return(false);
+	memset(philo, 0, sizeof(t_philo));
+	if (is_valid_args(argc, argv) == ERROR)
+		return (ERROR);
 	philo->num_of_philos = ft_atopi(argv[1]);
 	philo->time_to_die = ft_atopi(argv[2]);
 	philo->time_to_eat = ft_atopi(argv[3]);
@@ -71,5 +72,5 @@ bool	parse_input(t_philo *philo, int argc, char **argv)
 		philo->num_of_meals = ft_atopi(argv[5]);
 	else
 		philo->num_of_meals = -1;
-	return (true);
+	return (SUCCESS);
 }

@@ -6,7 +6,7 @@
 /*   By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 11:44:15 by hitran            #+#    #+#             */
-/*   Updated: 2024/09/26 14:38:37 by hitran           ###   ########.fr       */
+/*   Updated: 2024/09/26 23:36:25 by hitran           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,9 @@ long	get_millisecond(void)
 	return (time.tv_sec * 1000 + time.tv_usec / 1000);
 }
 
-bool	free_philo(t_philo *philo)
+t_status	free_philo(t_philo *philo)
 {
-	size_t index;
+	size_t	index;
 
 	if (philo->threads)
 		free (philo->threads);
@@ -45,14 +45,14 @@ bool	free_philo(t_philo *philo)
 		free(philo->forks);
 	}
 	pthread_mutex_destroy(&philo->lock);
-	return (false);
+	return (ERROR);
 }
 
-bool philo_error(t_philo *philo, char *message)
+t_status	philo_error(t_philo *philo, char *message)
 {
 	ft_putstr_fd(2, "Error: ");
 	ft_putstr_fd(2, message);
 	ft_putstr_fd(2, "\n");
 	free_philo(philo);
-	return (false);
+	return (ERROR);
 }
