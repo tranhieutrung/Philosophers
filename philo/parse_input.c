@@ -6,7 +6,7 @@
 /*   By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 10:32:34 by hitran            #+#    #+#             */
-/*   Updated: 2024/09/26 23:35:54 by hitran           ###   ########.fr       */
+/*   Updated: 2024/10/03 12:55:31 by hitran           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,14 @@
 
 static t_status	arg_error(char *argv, char *message)
 {
-	ft_putstr_fd(2, "Error: ");
+	write(2, "Error: ", 7);
 	if (argv)
 	{
-		ft_putstr_fd(2, argv);
-		ft_putstr_fd(2, ": ");
+		write(2, argv, ft_strlen(argv));
+		write(2, ": ", 2);
 	}
-	ft_putstr_fd(2, message);
-	ft_putstr_fd(2, "\n");
+	write(2, message, ft_strlen(message));
+	write(2, "\n", 1);
 	return (ERROR);
 }
 
@@ -44,7 +44,7 @@ static long	ft_atopi(char *s)
 	return (number);
 }
 
-t_status	is_valid_args(int argc, char **argv)
+static t_status	is_valid_args(int argc, char **argv)
 {
 	int	i;
 
@@ -55,6 +55,11 @@ t_status	is_valid_args(int argc, char **argv)
 	{
 		if (ft_atopi(argv[i]) <= 0)
 			return (arg_error(argv[i], "Is invalid"));
+		else if (ft_atopi(argv[1]) > 498)
+			return (arg_error(NULL,
+					"The program can only simulate up to 498 philosophers."));
+		else if (i > 1 && i < 5 && ft_atopi(argv[i]) <= 10)
+			return (arg_error(argv[i], "The time must be greater than 10ms"));
 	}
 	return (SUCCESS);
 }
