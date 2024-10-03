@@ -6,7 +6,7 @@
 /*   By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 13:11:20 by hitran            #+#    #+#             */
-/*   Updated: 2024/10/03 12:56:58 by hitran           ###   ########.fr       */
+/*   Updated: 2024/10/03 15:09:56 by hitran           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ t_status	print_action(t_thread *thread, char *message)
 {
 	pthread_mutex_lock(&thread->philo->lock);
 	if (thread->philo->status == FINISH)
-		return (unlock_return (&thread->philo->lock, NULL));
+		return (unlock_return(&thread->philo->lock, NULL));
 	printf("%-8lu %-6d %s\n", get_millisecond() - thread->philo->start_time,
 		thread->id, message);
 	pthread_mutex_unlock(&thread->philo->lock);

@@ -6,7 +6,7 @@
 /*   By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 21:38:43 by hitran            #+#    #+#             */
-/*   Updated: 2024/10/03 12:54:27 by hitran           ###   ########.fr       */
+/*   Updated: 2024/10/03 15:13:34 by hitran           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,12 @@ static t_status	init_mutexes(t_philo *philo)
 	index = 0;
 	while (index < philo->num_of_philos)
 	{
-		if (pthread_mutex_init(&philo->forks[index], NULL))
+		if (pthread_mutex_init(&philo->chopsticks[index], NULL))
 		{
 			while (index--)
-				pthread_mutex_destroy(&philo->forks[index]);
-			free(philo->forks);
-			philo->forks = NULL;
+				pthread_mutex_destroy(&philo->chopsticks[index]);
+			free(philo->chopsticks);
+			philo->chopsticks = NULL;
 			return (ERROR);
 		}
 		index++;
@@ -49,8 +49,8 @@ static t_status	init_threads(t_philo *philo)
 	while (index < philo->num_of_philos)
 	{
 		philo->threads[index].id = index + 1;
-		philo->threads[index].left_fork = &philo->forks[index];
-		philo->threads[index].right_fork = &philo->forks[(index + 1)
+		philo->threads[index].left_chopstick = &philo->chopsticks[index];
+		philo->threads[index].right_chopstick = &philo->chopsticks[(index + 1)
 			% philo->num_of_philos];
 		philo->threads[index].philo = philo;
 		philo->threads[index].last_eaten_time = philo->start_time;
@@ -73,11 +73,12 @@ static t_status	init_threads(t_philo *philo)
 t_status	init_philo(t_philo *philo)
 {
 	philo->threads = malloc(philo->num_of_philos * sizeof(t_thread));
-	philo->forks = malloc(philo->num_of_philos * sizeof(pthread_mutex_t));
-	if (!philo->threads || !philo->forks)
+	philo->chopsticks = malloc(philo->num_of_philos * sizeof(pthread_mutex_t));
+	if (!philo->threads || !philo->chopsticks)
 		return (init_error(philo, "Error: Failed to allocate memories\n"));
 	memset(philo->threads, 0, philo->num_of_philos * sizeof(t_thread));
-	memset(philo->forks, 0, philo->num_of_philos * sizeof(pthread_mutex_t));
+	memset(philo->chopsticks, 0,
+		philo->num_of_philos * sizeof(pthread_mutex_t));
 	if (init_mutexes(philo) == ERROR)
 		return (init_error(philo, "Error: Failed to init mutexes\n"));
 	philo->start_time = get_millisecond();

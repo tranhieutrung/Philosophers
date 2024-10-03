@@ -12,18 +12,18 @@
 
 #include "philo.h"
 
-static t_status	grab_forks(t_thread *thread)
+static t_status	grab_chopsticks(t_thread *thread)
 {
 	if (check_status(thread->philo) == FINISH)
 		return (ERROR);
-	pthread_mutex_lock(thread->left_fork);
-	if (print_action(thread, "has taken the first chopstick") == ERROR)
-		return (unlock_return(thread->left_fork, NULL));
+	pthread_mutex_lock(thread->left_chopstick);
+	if (print_action(thread, "has taken the left chopstick") == ERROR)
+		return (unlock_return(thread->left_chopstick, NULL));
 	if (thread->philo->num_of_philos == 1)
-		return (unlock_return (thread->left_fork, NULL));
-	pthread_mutex_lock(thread->right_fork);
-	if (print_action(thread, "has taken the second chopstick") == ERROR)
-		return (unlock_return (thread->left_fork, thread->right_fork));
+		return (unlock_return(thread->left_chopstick, NULL));
+	pthread_mutex_lock(thread->right_chopstick);
+	if (print_action(thread, "has taken the right chopstick") == ERROR)
+		return (unlock_return(thread->left_chopstick, thread->right_chopstick));
 	return (SUCCESS);
 }
 
@@ -36,14 +36,14 @@ static t_status	eating(t_thread *thread)
 	pthread_mutex_unlock(&thread->philo->lock);
 	print_action(thread, "is eating Pho");
 	if (waiting(thread->philo->time_to_eat, thread->philo) == ERROR)
-		return (unlock_return (thread->left_fork, thread->right_fork));
+		return (unlock_return(thread->left_chopstick, thread->right_chopstick));
 	pthread_mutex_lock(&thread->philo->lock);
 	thread->last_eaten_time = get_millisecond();
 	if (thread->eaten_times == thread->philo->num_of_meals)
 		thread->philo->num_of_full_philos++;
 	pthread_mutex_unlock(&thread->philo->lock);
-	pthread_mutex_unlock(thread->left_fork);
-	pthread_mutex_unlock(thread->right_fork);
+	pthread_mutex_unlock(thread->left_chopstick);
+	pthread_mutex_unlock(thread->right_chopstick);
 	return (SUCCESS);
 }
 
@@ -69,7 +69,7 @@ void	*philo_routine(void *arg)
 		waiting(thread->philo->time_to_eat, thread->philo);
 	while (1)
 	{
-		if (grab_forks(thread) == ERROR)
+		if (grab_chopsticks(thread) == ERROR)
 			break ;
 		if (eating(thread) == ERROR)
 			break ;
