@@ -6,7 +6,7 @@
 /*   By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 22:11:41 by hitran            #+#    #+#             */
-/*   Updated: 2024/10/03 12:57:17 by hitran           ###   ########.fr       */
+/*   Updated: 2024/10/03 14:59:48 by hitran           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,8 @@ typedef struct s_thread
 	int				id;
 	int				eaten_times;
 	long			last_eaten_time;
-	pthread_mutex_t	*left_fork;
-	pthread_mutex_t	*right_fork;
+	pthread_mutex_t	*left_chopstick;
+	pthread_mutex_t	*right_chopstick;
 	struct s_philo	*philo;
 }	t_thread;
 
@@ -49,7 +49,7 @@ typedef struct s_philo
 	int				time_to_sleep;
 	int				num_of_meals;
 	int				num_of_full_philos;
-	pthread_mutex_t	*forks;
+	pthread_mutex_t	*chopsticks;
 	pthread_mutex_t	lock;
 	t_thread		*threads;
 	t_status		status;

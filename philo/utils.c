@@ -6,7 +6,7 @@
 /*   By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 11:44:15 by hitran            #+#    #+#             */
-/*   Updated: 2024/10/03 12:58:26 by hitran           ###   ########.fr       */
+/*   Updated: 2024/10/03 14:59:48 by hitran           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,13 +38,13 @@ t_status	free_philo(t_philo *philo)
 	if (philo->threads)
 		free (philo->threads);
 	philo->threads = NULL;
-	if (philo->forks)
+	if (philo->chopsticks)
 	{
 		index = 0;
 		while (index < philo->num_of_philos)
-			pthread_mutex_destroy(&philo->forks[index++]);
-		free(philo->forks);
-		philo->forks = NULL;
+			pthread_mutex_destroy(&philo->chopsticks[index++]);
+		free(philo->chopsticks);
+		philo->chopsticks = NULL;
 	}
 	pthread_mutex_destroy(&philo->lock);
 	return (ERROR);
