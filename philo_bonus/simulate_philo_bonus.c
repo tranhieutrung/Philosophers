@@ -14,9 +14,9 @@
 
 static t_status	print_finish(t_philo *philo, int id)
 {
-	pthread_mutex_lock(&philo->lock);
+	sem_wait(philo->lock);
 	philo->status = FINISH;
-	pthread_mutex_unlock(&philo->lock);
+	sem_post(philo->lock);
 	if (id == 0)
 		printf("All philos ate at least %d times\n", philo->num_of_meals);
 	else
@@ -34,7 +34,7 @@ static t_status	monitor_philo(t_philo *philo)
 		if (((get_millisecond() - philo->threads[index].last_eaten_time)
 				>= (long)philo->time_to_die))
 			return (print_finish(philo, index + 1));
-		else if (philo->num_of_full_philos >= philo->num_of_philos)
+		else if (philo->num_of_full_philos == philo->num_of_philos)
 			return (print_finish(philo, 0));
 		index++;
 	}

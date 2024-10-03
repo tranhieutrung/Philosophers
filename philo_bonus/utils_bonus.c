@@ -33,20 +33,21 @@ long	get_millisecond(void)
 
 t_status	free_philo(t_philo *philo)
 {
-	int	index;
-
 	if (philo->threads)
 		free (philo->threads);
 	philo->threads = NULL;
 	if (philo->chopsticks)
 	{
-		index = 0;
-		while (index < philo->num_of_philos)
-			pthread_mutex_destroy(&philo->chopsticks[index++]);
-		free(philo->chopsticks);
+		sem_close(philo->chopsticks);
+    	sem_unlink("/chopstick_sem");
 		philo->chopsticks = NULL;
 	}
-	pthread_mutex_destroy(&philo->lock);
+	if (philo->lock)
+	{
+		sem_close(philo->lock);
+    	sem_unlink("/lock_sem");
+		philo->lock = NULL;
+	}
 	return (ERROR);
 }
 
@@ -57,11 +58,9 @@ t_status	philo_error(t_philo *philo, char *message)
 	return (ERROR);
 }
 
-t_status	unlock_return(pthread_mutex_t *mutex1, pthread_mutex_t *mutex2)
+t_status	post_return(sem_t *chopsticks, int num)
 {
-	if (mutex1)
-		pthread_mutex_unlock(mutex1);
-	if (mutex2)
-		pthread_mutex_unlock(mutex2);
+	while (num-- > 0)
+		sem_post(chopsticks);
 	return (ERROR);
 }

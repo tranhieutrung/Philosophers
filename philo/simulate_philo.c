@@ -6,7 +6,7 @@
 /*   By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 13:34:20 by hitran            #+#    #+#             */
-/*   Updated: 2024/10/03 15:14:30 by hitran           ###   ########.fr       */
+/*   Updated: 2024/10/03 23:07:23 by hitran           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ static t_status	monitor_philo(t_philo *philo)
 		if (((get_millisecond() - philo->threads[index].last_eaten_time)
 				>= (long)philo->time_to_die))
 			return (print_finish(philo, index + 1));
-		else if (philo->num_of_full_philos >= philo->num_of_philos)
+		else if (philo->num_of_full_philos == philo->num_of_philos)
 			return (print_finish(philo, 0));
 		index++;
 	}
