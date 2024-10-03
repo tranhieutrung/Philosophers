@@ -6,7 +6,7 @@
 #    By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/30 10:07:47 by hitran            #+#    #+#              #
-#    Updated: 2024/08/30 22:30:55 by hitran           ###   ########.fr        #
+#    Updated: 2024/10/03 15:26:24 by hitran           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,12 +18,17 @@ RM 				= rm -rf
 
 # Source files by directory
 SRCS			=	main_bonus.c	\
-					utils_bonus.c
+					parse_input_bonus.c	\
+					init_philo_bonus.c \
+					utils_bonus.c	\
+					philo_routine_bonus.c	\
+					routine_utils_bonus.c \
+					simulate_philo_bonus.c
 
-OBJS	=	$(SRCS:.c=.o)
+OBJS			=	$(SRCS:.c=.o)
 
 # Executables
-NAME 			= philo_bonus
+NAME 			= philo
 
 # Targets
 all : $(NAME)
@@ -39,4 +44,4 @@ fclean: clean
 	
 re: fclean all
 
-.PHONY: all clean fclean re bonus
+.PHONY: all clean fclean re
