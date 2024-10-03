@@ -1,46 +1,67 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils_bonus.c                                      :+:      :+:    :+:   */
+/*   utils_bonus.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/30 22:09:40 by hitran            #+#    #+#             */
-/*   Updated: 2024/08/30 22:17:32 by hitran           ###   ########.fr       */
+/*   Created: 2024/09/25 11:44:15 by hitran            #+#    #+#             */
+/*   Updated: 2024/10/03 14:59:48 by hitran           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-size_t	ft_strlen(const char *s)
+int	ft_strlen(char *s)
 {
-	size_t	i;
+	int	len;
 
-	i = 0;
-	if (!s)
-		return (0);
-	while (s[i])
-		i++;
-	return (i);
+	len = 0;
+	while (s && s[len] != '\0')
+		len++;
+	return (len);
 }
 
-long	ft_atol(const char *s)
+long	get_millisecond(void)
 {
-	long	nb;
-	int		sign;
+	struct timeval	time;
 
-	nb = 0;
-	sign = 1;
-	while ((*s > 8 && *s < 14) || *s == ' ')
-		s++;
-	if (*s == '-')
-		sign = -sign;
-	if (*s == '-' || *s == '+')
-		s++;
-	while (*s >= '0' && *s <= '9')
+	if (gettimeofday(&time, NULL) == -1)
+		return (-1);
+	return (time.tv_sec * 1000 + time.tv_usec / 1000);
+}
+
+t_status	free_philo(t_philo *philo)
+{
+	int	index;
+
+	if (philo->threads)
+		free (philo->threads);
+	philo->threads = NULL;
+	if (philo->chopsticks)
 	{
-		nb = (nb * 10) + (*s - '0');
-		s++;
+		index = 0;
+		while (index < philo->num_of_philos)
+			pthread_mutex_destroy(&philo->chopsticks[index++]);
+		free(philo->chopsticks);
+		philo->chopsticks = NULL;
 	}
-	return (nb * sign);
+	pthread_mutex_destroy(&philo->lock);
+	return (ERROR);
+}
+
+t_status	philo_error(t_philo *philo, char *message)
+{
+	write(2, message, ft_strlen(message));
+	free_philo(philo);
+	return (ERROR);
+}
+
+t_status	unlock_return(pthread_mutex_t *mutex1, pthread_mutex_t *mutex2)
+{
+	if (mutex1)
+		pthread_mutex_unlock(mutex1);
+	if (mutex2)
+		pthread_mutex_unlock(mutex2);
+	return (ERROR);
 }
