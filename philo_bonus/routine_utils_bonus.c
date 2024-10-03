@@ -16,9 +16,9 @@ t_status	check_status(t_philo *philo)
 {
 	t_status	status;
 
-	pthread_mutex_lock(&philo->lock);
+	sem_wait(philo->lock);
 	status = philo->status;
-	pthread_mutex_unlock(&philo->lock);
+	sem_post(philo->lock);
 	return (status);
 }
 
@@ -38,11 +38,11 @@ t_status	waiting(long ms, t_philo *philo)
 
 t_status	print_action(t_thread *thread, char *message)
 {
-	pthread_mutex_lock(&thread->philo->lock);
+	sem_wait(thread->philo->lock);
 	if (thread->philo->status == FINISH)
-		return (unlock_return(&thread->philo->lock, NULL));
+		return (post_return(thread->philo->lock, 1));
 	printf("%-8lu %-6d %s\n", get_millisecond() - thread->philo->start_time,
 		thread->id, message);
-	pthread_mutex_unlock(&thread->philo->lock);
+	sem_post(thread->philo->lock);
 	return (SUCCESS);
 }

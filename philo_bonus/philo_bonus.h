@@ -6,7 +6,7 @@
 /*   By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 22:11:41 by hitran            #+#    #+#             */
-/*   Updated: 2024/10/03 15:46:29 by hitran           ###   ########.fr       */
+/*   Updated: 2024/10/03 22:02:22 by hitran           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ t_status	simulate_philo(t_philo *philo);
 t_status	check_status(t_philo *philo);
 t_status	waiting(long ms, t_philo *philo);
 t_status	print_action(t_thread *thread, char *message);
-t_status	unlock_return(pthread_mutex_t *mutex1, pthread_mutex_t *mutex2);
+t_status	post_return(sem_t *chopsticks, int num);
 
 //----------------------------||     UTILS      ||----------------------------//
 
