@@ -12,42 +12,33 @@
 
 #include "philo.h"
 
-t_status	grab_forks(t_thread *thread)
+static t_status	grab_forks(t_thread *thread)
 {
 	if (check_status(thread->philo) == FINISH)
 		return (ERROR);
 	pthread_mutex_lock(thread->left_fork);
-	if (print_action(thread, "has taken a fork") == ERROR)
-	{
-		pthread_mutex_unlock(thread->left_fork);
-		return (ERROR);
-	}
-	if (check_status(thread->philo) == FINISH
-		|| thread->philo->num_of_philos == 1)
-	{
-		pthread_mutex_unlock(thread->left_fork);
-		return (ERROR);
-	}
+	if (print_action(thread, "has taken the first chopstick") == ERROR)
+		return (unlock_return(thread->left_fork, NULL));
+	if (thread->philo->num_of_philos == 1)
+		return (unlock_return (thread->left_fork, NULL));
 	pthread_mutex_lock(thread->right_fork);
-	if (print_action(thread, "has taken a fork") == ERROR)
-	{
-		pthread_mutex_unlock(thread->left_fork);
-		pthread_mutex_unlock(thread->right_fork);
-		return (ERROR);
-	}
+	if (print_action(thread, "has taken the second chopstick") == ERROR)
+		return (unlock_return (thread->left_fork, thread->right_fork));
 	return (SUCCESS);
 }
 
-t_status	eating(t_thread *thread)
+static t_status	eating(t_thread *thread)
 {
-	pthread_mutex_lock(&thread->philo->lock);
-	thread->eaten_times++;
-	thread->last_eaten_time = get_millisecond();
-	pthread_mutex_unlock(&thread->philo->lock);
-	print_action(thread, "is eating");
-	if (waiting(thread->philo->time_to_eat, thread->philo) == ERROR)
+	if (check_status(thread->philo) == FINISH)
 		return (ERROR);
 	pthread_mutex_lock(&thread->philo->lock);
+	thread->eaten_times++;
+	pthread_mutex_unlock(&thread->philo->lock);
+	print_action(thread, "is eating Pho");
+	if (waiting(thread->philo->time_to_eat, thread->philo) == ERROR)
+		return (unlock_return (thread->left_fork, thread->right_fork));
+	pthread_mutex_lock(&thread->philo->lock);
+	thread->last_eaten_time = get_millisecond();
 	if (thread->eaten_times == thread->philo->num_of_meals)
 		thread->philo->num_of_full_philos++;
 	pthread_mutex_unlock(&thread->philo->lock);
@@ -56,13 +47,15 @@ t_status	eating(t_thread *thread)
 	return (SUCCESS);
 }
 
-t_status	not_eating(t_thread *thread)
+static t_status	not_eating(t_thread *thread)
 {
+	if (check_status(thread->philo) == FINISH)
+		return (ERROR);
 	if (print_action(thread, "is sleeping") == ERROR)
 		return (ERROR);
 	if (waiting(thread->philo->time_to_sleep, thread->philo) == ERROR)
 		return (ERROR);
-	if (print_action(thread, "is thinking") == ERROR)
+	if (print_action(thread, "is coding") == ERROR)
 		return (ERROR);
 	return (SUCCESS);
 }

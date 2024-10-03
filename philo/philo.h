@@ -6,7 +6,7 @@
 /*   By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 22:11:41 by hitran            #+#    #+#             */
-/*   Updated: 2024/09/26 23:35:21 by hitran           ###   ########.fr       */
+/*   Updated: 2024/10/03 12:57:17 by hitran           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@
 typedef struct s_thread
 {
 	pthread_t		thread;
-	size_t			id;
-	size_t			eaten_times;
+	int				id;
+	int				eaten_times;
 	long			last_eaten_time;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
@@ -43,12 +43,12 @@ typedef enum e_status
 
 typedef struct s_philo
 {
-	size_t			num_of_philos;
-	size_t			time_to_die;
-	size_t			time_to_eat;
-	size_t			time_to_sleep;
-	size_t			num_of_meals;
-	size_t			num_of_full_philos;
+	int				num_of_philos;
+	int				time_to_die;
+	int				time_to_eat;
+	int				time_to_sleep;
+	int				num_of_meals;
+	int				num_of_full_philos;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	lock;
 	t_thread		*threads;
@@ -67,10 +67,11 @@ t_status	simulate_philo(t_philo *philo);
 t_status	check_status(t_philo *philo);
 t_status	waiting(long ms, t_philo *philo);
 t_status	print_action(t_thread *thread, char *message);
+t_status	unlock_return(pthread_mutex_t *mutex1, pthread_mutex_t *mutex2);
 
 //----------------------------||     UTILS      ||----------------------------//
 
-void		ft_putstr_fd(int fd, char *s);
+int			ft_strlen(char *s);
 long		get_millisecond(void);
 t_status	free_philo(t_philo *philo);
 t_status	philo_error(t_philo *philo, char *message);

@@ -6,48 +6,50 @@
 /*   By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 13:34:20 by hitran            #+#    #+#             */
-/*   Updated: 2024/09/26 23:33:48 by hitran           ###   ########.fr       */
+/*   Updated: 2024/10/03 12:58:03 by hitran           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-t_status	monitor_philo(t_philo *philo)
+static t_status	print_finish(t_philo *philo, int id)
 {
-	size_t	index;
+	pthread_mutex_lock(&philo->lock);
+	philo->status = FINISH;
+	if (id == 0)
+		printf("All philos ate at least %d times\n", philo->num_of_meals);
+	else
+		printf("%-8lu %-6d died\n", get_millisecond() - philo->start_time, id);
+	pthread_mutex_unlock(&philo->lock);
+	return (FINISH);
+}
+
+static t_status	monitor_philo(t_philo *philo)
+{
+	int	index;
 
 	index = 0;
 	while (index < philo->num_of_philos)
 	{
-		pthread_mutex_lock(&philo->lock);
-		if (((size_t)(get_millisecond()
-				- philo->threads[index].last_eaten_time) >= philo->time_to_die)
-				|| philo->num_of_full_philos == philo->num_of_philos)
-		{
-			philo->status = FINISH;
-			if (philo->num_of_full_philos == philo->num_of_philos)
-				printf("All philosophers ate %ld times\n", philo->num_of_meals);
-			else
-				printf("%lu %ld died\n", get_millisecond()
-					- philo->start_time, index + 1);
-			pthread_mutex_unlock(&philo->lock);
-			return (FINISH);
-		}
+		if (((get_millisecond() - philo->threads[index].last_eaten_time)
+				>= (long)philo->time_to_die))
+			return (print_finish(philo, index + 1));
+		else if (philo->num_of_full_philos == philo->num_of_philos)
+			return (print_finish(philo, 0));
 		index++;
-		pthread_mutex_unlock(&philo->lock);
 	}
 	return (RUNNING);
 }
 
 t_status	wait_for_all_threads(t_philo *philo)
 {
-	size_t	index;
+	int	index;
 
 	index = 0;
 	while (index < philo->num_of_philos)
 	{
 		if (pthread_join(philo->threads[index].thread, NULL))
-			return (philo_error(philo, "Failed to join threads"));
+			return (philo_error(philo, "Error: Failed to join threads"));
 		index++;
 	}
 	return (SUCCESS);
@@ -62,5 +64,6 @@ t_status	simulate_philo(t_philo *philo)
 	}
 	if (wait_for_all_threads(philo) == ERROR)
 		return (ERROR);
+	free_philo(philo);
 	return (SUCCESS);
 }

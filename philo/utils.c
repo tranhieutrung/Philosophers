@@ -6,20 +6,20 @@
 /*   By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 11:44:15 by hitran            #+#    #+#             */
-/*   Updated: 2024/09/26 23:36:25 by hitran           ###   ########.fr       */
+/*   Updated: 2024/10/03 12:58:26 by hitran           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	ft_putstr_fd(int fd, char *s)
+int	ft_strlen(char *s)
 {
-	size_t	len;
+	int	len;
 
 	len = 0;
-	while (s && s[len])
+	while (s && s[len] != '\0')
 		len++;
-	write(fd, s, len);
+	return (len);
 }
 
 long	get_millisecond(void)
@@ -33,16 +33,18 @@ long	get_millisecond(void)
 
 t_status	free_philo(t_philo *philo)
 {
-	size_t	index;
+	int	index;
 
 	if (philo->threads)
 		free (philo->threads);
+	philo->threads = NULL;
 	if (philo->forks)
 	{
 		index = 0;
 		while (index < philo->num_of_philos)
 			pthread_mutex_destroy(&philo->forks[index++]);
 		free(philo->forks);
+		philo->forks = NULL;
 	}
 	pthread_mutex_destroy(&philo->lock);
 	return (ERROR);
@@ -50,9 +52,16 @@ t_status	free_philo(t_philo *philo)
 
 t_status	philo_error(t_philo *philo, char *message)
 {
-	ft_putstr_fd(2, "Error: ");
-	ft_putstr_fd(2, message);
-	ft_putstr_fd(2, "\n");
+	write(2, message, ft_strlen(message));
 	free_philo(philo);
+	return (ERROR);
+}
+
+t_status	unlock_return(pthread_mutex_t *mutex1, pthread_mutex_t *mutex2)
+{
+	if (mutex1)
+		pthread_mutex_unlock(mutex1);
+	if (mutex2)
+		pthread_mutex_unlock(mutex2);
 	return (ERROR);
 }

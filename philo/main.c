@@ -6,7 +6,7 @@
 /*   By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 21:23:12 by hitran            #+#    #+#             */
-/*   Updated: 2024/09/26 23:36:41 by hitran           ###   ########.fr       */
+/*   Updated: 2024/10/03 12:06:23 by hitran           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,5 @@ int	main(int argc, char **argv)
 		return (EXIT_FAILURE);
 	if (simulate_philo(&philo) == ERROR)
 		return (EXIT_FAILURE);
-	free_philo(&philo);
 	return (EXIT_SUCCESS);
 }
