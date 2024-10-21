@@ -24,6 +24,22 @@ static t_status	print_finish(t_philo *philo, int id)
 	return (FINISH);
 }
 
+static t_status	check_exit(int num_of_philos)
+{
+	int	index;
+	int	status;
+
+	index = 0;
+	while (index < num_of_philos)
+	{
+		waitpid(0, &status, 0);
+		if (WEXITSTATUS(status) == EXIT_FAILURE)
+			return (FINISH);
+		index++;
+	}
+	return (RUNNING);
+}
+
 static t_status	monitor_philo(t_philo *philo)
 {
 	int	index;
@@ -31,8 +47,8 @@ static t_status	monitor_philo(t_philo *philo)
 	index = 0;
 	while (index < philo->num_of_philos)
 	{
-		if (((get_millisecond() - philo->threads[index].last_eaten_time)
-				>= (long)philo->time_to_die))
+		if (((get_millisecond() - philo->last_eaten_time)
+				>= (long)philo->time_to_die))																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																		
 			return (print_finish(philo, index + 1));
 		else if (philo->num_of_full_philos == philo->num_of_philos)
 			return (print_finish(philo, 0));
@@ -41,29 +57,22 @@ static t_status	monitor_philo(t_philo *philo)
 	return (RUNNING);
 }
 
-static t_status	wait_for_all_threads(t_philo *philo)
-{
-	int	index;
-
-	index = 0;
-	while (index < philo->num_of_philos)
-	{
-		if (pthread_join(philo->threads[index].thread, NULL))
-			return (philo_error(philo, "Error: Failed to join threads"));
-		index++;
-	}
-	return (SUCCESS);
-}
-
 t_status	simulate_philo(t_philo *philo)
 {
+	int index;
+
 	while (1)
 	{
 		if (monitor_philo(philo) == FINISH)
+		{
+			index = philo->num_of_philos;
+			while (index--)
+				kill(philo->pid[index], SIGKILL);
 			break ;
+		}
 	}
-	if (wait_for_all_threads(philo) == ERROR)
-		return (ERROR);
+	check_exit(philo->num_of_philos);
+	free(philo->pid);
 	free_philo(philo);
 	return (SUCCESS);
 }

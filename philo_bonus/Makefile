@@ -6,7 +6,7 @@
 #    By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/30 10:07:47 by hitran            #+#    #+#              #
-#    Updated: 2024/10/03 15:26:24 by hitran           ###   ########.fr        #
+#    Updated: 2024/10/21 10:34:15 by hitran           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,6 +32,7 @@ NAME 			= philo
 
 # Targets
 all : $(NAME)
+bonus : $(NAME)
 
 $(NAME): $(OBJS)
 	$(CC) $(CFLAGS) $(INCLUDES) $(OBJS) -o $(NAME)
@@ -44,4 +45,4 @@ fclean: clean
 	
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re bonus

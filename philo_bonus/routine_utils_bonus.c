@@ -36,13 +36,13 @@ t_status	waiting(long ms, t_philo *philo)
 	return (SUCCESS);
 }
 
-t_status	print_action(t_thread *thread, char *message)
+t_status	print_action(t_philo *philo, char *message)
 {
-	sem_wait(thread->philo->lock);
-	if (thread->philo->status == FINISH)
-		return (post_return(thread->philo->lock, 1));
-	printf("%-8lu %-6d %s\n", get_millisecond() - thread->philo->start_time,
-		thread->id, message);
-	sem_post(thread->philo->lock);
+	sem_wait(philo->lock);
+	if (philo->status == FINISH)
+		return (post_return(philo->lock, 1));
+	printf("%-8lu %-6d %s\n", get_millisecond() - philo->start_time,
+		philo->id, message);
+	sem_post(philo->lock);
 	return (SUCCESS);
 }
