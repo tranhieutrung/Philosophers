@@ -21,10 +21,12 @@ static t_status	init_error(t_philo *philo, char *message)
 
 static t_status	init_semaphores(t_philo *philo)
 {
+	sem_unlink("/chopstick_sem");
 	philo->chopsticks = sem_open("/chopstick_sem", O_CREAT, 0644,
 		philo->num_of_philos);
 	if (philo->chopsticks == SEM_FAILED)
 		return (ERROR);
+	sem_unlink("/lock_sem");
 	philo->lock = sem_open("/lock_sem", O_CREAT, 0644, 1);
 	if (philo->lock == SEM_FAILED)
 	{
@@ -35,26 +37,25 @@ static t_status	init_semaphores(t_philo *philo)
 	return (SUCCESS);
 }
 
-static t_status	init_threads(t_philo *philo)
+static t_status	init_processes(t_philo *philo)
 {
-	int	index;
+	int		index;
 
+	philo->pid = (pid_t *)malloc(philo->num_of_philos * sizeof(pid_t));
+	if (!philo->pid)
+		return (ERROR);
 	index = 0;
 	while (index < philo->num_of_philos)
 	{
-		philo->threads[index].id = index + 1;
-		philo->threads[index].philo = philo;
-		philo->threads[index].last_eaten_time = philo->start_time;
-		if (pthread_create(&(philo->threads[index].thread), NULL,
-				&philo_routine, &philo->threads[index]))
-		{
-			sem_wait(philo->lock);
-			philo->status = FINISH;
-			sem_post(philo->lock);
-			usleep(1000);
-			while (index--)
-				pthread_join(philo->threads[index].thread, NULL);
+		philo->pid[index] = fork();
+		if (philo->pid[index] == -1)
 			return (ERROR);
+		else if (philo->pid[index] == 0)
+		{
+			free (philo->pid);
+			philo->id = index + 1;
+			philo->last_eaten_time = philo->start_time;
+			return (philo_routine(philo));
 		}
 		index++;
 	}
@@ -68,11 +69,7 @@ t_status	init_philo(t_philo *philo)
 	philo->start_time = get_millisecond();
 	if (philo->start_time == -1)
 		return (init_error(philo, "Error: Failed to get time\n"));
-	philo->threads = malloc(philo->num_of_philos * sizeof(t_thread));
-	if (!philo->threads)
-		return (init_error(philo, "Error: Failed to allocate memories\n"));
-	memset(philo->threads, 0, philo->num_of_philos * sizeof(t_thread));
-	if (init_threads(philo) == ERROR)
-		return (init_error(philo, "Error: Failed to init threads\n"));
+	if (init_processes(philo) == ERROR)
+		return (init_error(philo, "Error: Failed to init processes\n"));
 	return (SUCCESS);
 }

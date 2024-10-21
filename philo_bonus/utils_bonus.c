@@ -33,9 +33,6 @@ long	get_millisecond(void)
 
 t_status	free_philo(t_philo *philo)
 {
-	if (philo->threads)
-		free (philo->threads);
-	philo->threads = NULL;
 	if (philo->chopsticks)
 	{
 		sem_close(philo->chopsticks);
