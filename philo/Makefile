@@ -6,7 +6,7 @@
 #    By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/30 10:07:47 by hitran            #+#    #+#              #
-#    Updated: 2024/09/26 14:22:36 by hitran           ###   ########.fr        #
+#    Updated: 2024/10/24 13:55:36 by hitran           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ SRCS			=	main.c	\
 					parse_input.c	\
 					init_philo.c \
 					utils.c	\
-					philo_routine.c	\
+					routine.c	\
 					routine_utils.c \
 					simulate_philo.c
 

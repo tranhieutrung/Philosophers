@@ -6,7 +6,7 @@
 /*   By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 13:11:20 by hitran            #+#    #+#             */
-/*   Updated: 2024/10/03 15:09:56 by hitran           ###   ########.fr       */
+/*   Updated: 2024/10/24 14:41:37 by hitran           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,15 @@ t_status	waiting(long ms, t_philo *philo)
 		usleep(1000);
 	}
 	return (SUCCESS);
+}
+
+t_status	unlock_return(pthread_mutex_t *mutex1, pthread_mutex_t *mutex2)
+{
+	if (mutex1)
+		pthread_mutex_unlock(mutex1);
+	if (mutex2)
+		pthread_mutex_unlock(mutex2);
+	return (ERROR);
 }
 
 t_status	print_action(t_thread *thread, char *message)

@@ -6,7 +6,7 @@
 /*   By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 11:44:15 by hitran            #+#    #+#             */
-/*   Updated: 2024/10/03 14:59:48 by hitran           ###   ########.fr       */
+/*   Updated: 2024/10/24 13:50:06 by hitran           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ t_status	free_philo(t_philo *philo)
 	if (philo->chopsticks)
 	{
 		index = 0;
-		while (index < philo->num_of_philos)
+		while (index < philo->total)
 			pthread_mutex_destroy(&philo->chopsticks[index++]);
 		free(philo->chopsticks);
 		philo->chopsticks = NULL;
@@ -54,14 +54,5 @@ t_status	philo_error(t_philo *philo, char *message)
 {
 	write(2, message, ft_strlen(message));
 	free_philo(philo);
-	return (ERROR);
-}
-
-t_status	unlock_return(pthread_mutex_t *mutex1, pthread_mutex_t *mutex2)
-{
-	if (mutex1)
-		pthread_mutex_unlock(mutex1);
-	if (mutex2)
-		pthread_mutex_unlock(mutex2);
 	return (ERROR);
 }

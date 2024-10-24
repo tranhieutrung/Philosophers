@@ -6,7 +6,7 @@
 /*   By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 22:11:41 by hitran            #+#    #+#             */
-/*   Updated: 2024/10/03 14:59:48 by hitran           ###   ########.fr       */
+/*   Updated: 2024/10/24 13:50:38 by hitran           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,12 +43,12 @@ typedef enum e_status
 
 typedef struct s_philo
 {
-	int				num_of_philos;
+	int				total;
 	int				time_to_die;
 	int				time_to_eat;
 	int				time_to_sleep;
-	int				num_of_meals;
-	int				num_of_full_philos;
+	int				meals;
+	int				full_total;
 	pthread_mutex_t	*chopsticks;
 	pthread_mutex_t	lock;
 	t_thread		*threads;
@@ -59,7 +59,7 @@ typedef struct s_philo
 //----------------------------||     PHILO      ||----------------------------//
 t_status	parse_input(t_philo *philo, int argc, char **argv);
 t_status	init_philo(t_philo *philo);
-void		*philo_routine(void *arg);
+void		*routine(void *arg);
 t_status	simulate_philo(t_philo *philo);
 
 //----------------------------||  ROUTINE UTILS ||----------------------------//
@@ -68,6 +68,7 @@ t_status	check_status(t_philo *philo);
 t_status	waiting(long ms, t_philo *philo);
 t_status	print_action(t_thread *thread, char *message);
 t_status	unlock_return(pthread_mutex_t *mutex1, pthread_mutex_t *mutex2);
+void		set_finish(t_philo *philo);
 
 //----------------------------||     UTILS      ||----------------------------//
 
