@@ -6,25 +6,18 @@
 /*   By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 21:38:43 by hitran            #+#    #+#             */
-/*   Updated: 2024/10/03 15:13:34 by hitran           ###   ########.fr       */
+/*   Updated: 2024/10/24 14:27:17 by hitran           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-static t_status	init_error(t_philo *philo, char *message)
-{
-	write(2, message, ft_strlen(message));
-	free_philo(philo);
-	return (ERROR);
-}
 
 static t_status	init_mutexes(t_philo *philo)
 {
 	int	index;
 
 	index = 0;
-	while (index < philo->num_of_philos)
+	while (index < philo->total)
 	{
 		if (pthread_mutex_init(&philo->chopsticks[index], NULL))
 		{
@@ -46,21 +39,21 @@ static t_status	init_threads(t_philo *philo)
 	int	index;
 
 	index = 0;
-	while (index < philo->num_of_philos)
+	while (index < philo->total)
 	{
 		philo->threads[index].id = index + 1;
 		philo->threads[index].left_chopstick = &philo->chopsticks[index];
 		philo->threads[index].right_chopstick = &philo->chopsticks[(index + 1)
-			% philo->num_of_philos];
+			% philo->total];
 		philo->threads[index].philo = philo;
 		philo->threads[index].last_eaten_time = philo->start_time;
 		if (pthread_create(&(philo->threads[index].thread), NULL,
-				&philo_routine, &philo->threads[index]))
+				&routine, &philo->threads[index]))
 		{
 			pthread_mutex_lock(&philo->lock);
 			philo->status = FINISH;
+			usleep(500);
 			pthread_mutex_unlock(&philo->lock);
-			usleep(1000);
 			while (index--)
 				pthread_join(philo->threads[index].thread, NULL);
 			return (ERROR);
@@ -72,19 +65,18 @@ static t_status	init_threads(t_philo *philo)
 
 t_status	init_philo(t_philo *philo)
 {
-	philo->threads = malloc(philo->num_of_philos * sizeof(t_thread));
-	philo->chopsticks = malloc(philo->num_of_philos * sizeof(pthread_mutex_t));
+	philo->threads = malloc(philo->total * sizeof(t_thread));
+	philo->chopsticks = malloc(philo->total * sizeof(pthread_mutex_t));
 	if (!philo->threads || !philo->chopsticks)
-		return (init_error(philo, "Error: Failed to allocate memories\n"));
-	memset(philo->threads, 0, philo->num_of_philos * sizeof(t_thread));
-	memset(philo->chopsticks, 0,
-		philo->num_of_philos * sizeof(pthread_mutex_t));
+		return (philo_error(philo, "Error: Failed to allocate memories\n"));
+	memset(philo->threads, 0, philo->total * sizeof(t_thread));
+	memset(philo->chopsticks, 0, philo->total * sizeof(pthread_mutex_t));
 	if (init_mutexes(philo) == ERROR)
-		return (init_error(philo, "Error: Failed to init mutexes\n"));
+		return (philo_error(philo, "Error: Failed to init mutexes\n"));
 	philo->start_time = get_millisecond();
 	if (philo->start_time == -1)
-		return (init_error(philo, "Error: Failed to get time\n"));
+		return (philo_error(philo, "Error: Failed to get time\n"));
 	if (init_threads(philo) == ERROR)
-		return (init_error(philo, "Error: Failed to init threads\n"));
+		return (philo_error(philo, "Error: Failed to init threads\n"));
 	return (SUCCESS);
 }
