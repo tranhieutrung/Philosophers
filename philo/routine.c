@@ -6,7 +6,7 @@
 /*   By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 14:43:05 by hitran            #+#    #+#             */
-/*   Updated: 2024/10/24 15:32:44 by hitran           ###   ########.fr       */
+/*   Updated: 2024/10/28 11:30:23 by hitran           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,11 @@ void	*routine(void *arg)
 
 	thread = arg;
 	if (thread->id % 2 == 0)
+	{
+		if (print_action(thread, "is coding") == ERROR)
+			return (ERROR);
 		waiting(thread->philo->time_to_eat, thread->philo);
+	}
 	while (1)
 	{
 		if (grab_chopsticks(thread) == ERROR)
