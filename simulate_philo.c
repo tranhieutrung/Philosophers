@@ -6,7 +6,7 @@
 /*   By: hitran <hitran@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/26 13:34:20 by hitran            #+#    #+#             */
-/*   Updated: 2024/10/24 15:27:16 by hitran           ###   ########.fr       */
+/*   Updated: 2024/10/30 12:47:30 by hitran           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,16 +29,26 @@ static t_status	print_finish(t_philo *philo, int id)
 
 static t_status	monitor_philo(t_philo *philo)
 {
-	int	index;
+	int		index;
+	long	hungry_time;
+	int		full_total;
 
 	index = 0;
 	while (index < philo->total)
 	{
-		if (((get_millisecond() - philo->threads[index].last_eaten_time)
-				>= (long)philo->time_to_die))
+		pthread_mutex_lock(&philo->lock);
+		hungry_time = get_millisecond() - philo->threads[index].last_eaten_time;
+		pthread_mutex_unlock(&philo->lock);
+		if (hungry_time >= (long)philo->time_to_die)
 			return (print_finish(philo, index + 1));
-		else if (philo->full_total == philo->total)
-			return (print_finish(philo, 0));
+		else
+		{
+			pthread_mutex_lock(&philo->lock);
+			full_total = philo->full_total;
+			pthread_mutex_unlock(&philo->lock);
+			if (full_total == philo->total)
+				return (print_finish(philo, 0));
+		}
 		index++;
 	}
 	return (RUNNING);
