@@ -21,21 +21,22 @@ The program simulates n philosophers sitting at a table, each needing two forks 
 
 # How to Use
 ## Compile the Project:
-bash
-git clone [git@github.com:tranhieutrung/Philosophers.git](https://github.com/tranhieutrung/Philosophers.git)<br>
-cd Philosophers<br>
+```bash
+git clone https://github.com/tranhieutrung/Philosophers.git
+cd Philosophers
 make
+```
 
 ## Run the Simulation:
 To run the simulation, use the following command:
-bash
+```bash
 ./philosophers <num_philosophers> <time_to_die> <time_to_eat> <time_to_sleep> [optional: <num_of_meals>]
-
+```
 ## Example:
 
-bash
+```bash
 ./philosophers 5 800 200 200 3
-
+```
 ![Usage GIF](https://github.com/tranhieutrung/Philosophers/blob/main/Philosophers.gif)
 
 ### In this example:
