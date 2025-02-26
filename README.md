@@ -58,8 +58,8 @@ Each philosopher must eat 3 times.<br>
 
 - Each philosopher runs in its own thread.
 - Forks are shared between two adjacent philosophers, protected by mutexes to prevent simultaneous access and ensure the system remains deadlock-free.
-- All philosophers start by "thinking," then even-numbered philosophers will begin by taking forks and eating, while odd-numbered philosophers will wait until the even-numbered ones finish eating and return the forks before they can start taking their forks and eating.
-- In the simulation with an even number of philosophers, one philosopher (the last one, n-1) will have to wait twice before they can eat.
+- All philosophers start by "thinking," then odd-numbered philosophers will begin by taking forks and eating, while even-numbered philosophers will wait until the odd-numbered ones finish eating and return the forks before they can start taking their forks and eating.
+- In the simulation with an odd number of philosophers, one philosopher (the last even one) will have to wait twice before they can eat.
 
 ## Error Handling:
 
